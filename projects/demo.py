@@ -25,24 +25,35 @@ poGraph = {"LoginPage": {"login": "HomePage"},
                            "OsPage": {"add_object": "OsPage"}}
 Graph = {'A':{'a':'B','z':'Z'},
 		 'B':{'c':'C','d':'D','e':'E'},
-		 'Z':{'s':'S'}
+		 'Z':{'s':'S'},
+		 'C':{'f':'A'}
 		 }
+from collections import Counter
 from treelib import Node,Tree
 tree = Tree()
 def bfs_tree(graph, start):
+	#根节点以start开始
+	visited = [start]
 	tree.create_node(start,start.lower())
-	for edge,nextNode in graph[start].items():
-		tree.create_node(nextNode,nextNode.lower(),parent=start.lower())
-		queue=[nextNode]
+	for edge, nextNode in graph[start].items():
+		tree.create_node(nextNode, nextNode.lower(), parent=start.lower())
+		queue = [nextNode]
+		visited.append(nextNode)
 		while queue:
 			node = queue.pop(0)
-			for k,v in graph[node].items():
-				tree.create_node(v,v.lower(),parent=node.lower())
-				if v in list(graph.keys()):
-					queue.append(v)
+			visited.append(node)
+			for k, v in graph[node].items():
+				if v not in visited:
+					tree.create_node(v, v.lower(), parent=node.lower())
+					if v in list(graph.keys()):
+						queue.append(v)
+					else:
+						queue = []
 				else:
+					tree.create_node(v,v.upper(),parent=node.lower())
 					queue = []
 	tree.show()
+	return tree.paths_to_leaves()
 
 if __name__ == '__main__':
 	print(bfs_tree(Graph,'A'))
